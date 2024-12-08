@@ -22,7 +22,7 @@
   <script>
     const screen = document.getElementById('screen')
     const context = screen.getContext('2d') // permite que você manipule e desenhe objetos em 2D
-
+    const currentPlayerId = 'player 1'
     const game = {
       players: {
         'player 1': {x: 1, y:6},
@@ -32,21 +32,47 @@
         'fruit': {x: 3, y: 4}
       }
     }
-
+    
     function renderScreen() {
-      
-      for(playerId in game.players) {
+      context.clearRect(0,0, 10, 10)
+
+      for(const playerId in game.players) {
         const player = game.players[playerId]
         context.fillStyle = 'black'
         context.fillRect(player.x, player.y, 1, 1) // não considera altura nem largura portanto é 1
       }
 
-      for(fruitId in game.fruits) {
+      for(const fruitId in game.fruits) {
         const fruit = game.fruits[fruitId]
         context.fillStyle = 'green'
         context.fillRect(fruit.x, fruit.y, 1, 1)
       }
-      requestAnimationFrame(renderScreen)
+      requestAnimationFrame(renderScreen) // uma API do próprio JavaScript que informa ao navegador que fará uma animação
+    }
+
+    document.addEventListener('keydown', handleKeydown)
+
+    function handleKeydown(event) {
+      const keyPressed = event.key
+      console.log(keyPressed)
+      const player = game.players[currentPlayerId]
+
+      if(keyPressed === 'ArrowUp' && player.y > screen.height - 10) {
+        player.y = player.y - 1
+        return 
+      }
+      if(keyPressed === 'ArrowDown' && player.y < screen.height - 1) {
+        player.y = player.y + 1
+        return
+      }
+      if(keyPressed === 'ArrowRight' && player.x < screen.width - 1) {
+        player.x = player.x + 1
+        return
+      }
+      if(keyPressed === 'ArrowLeft' && player.x > screen.width - 10 ) {
+        player.x = player.x -1
+        return
+      }
     }
 
     renderScreen()
