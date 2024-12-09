@@ -11,7 +11,7 @@ function createGame() {
 }
 
   function movePlayer(command) {
-    console.log(`Moving ${command.playerId} with ${command.keyPressed}`)
+    console.log(`Moving ${command.currentPlayerId} with ${command.keyPressed}`)
 
     const keyPressed = command.keyPressed
     const player = state.players[command.currentPlayerId]
