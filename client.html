@@ -23,9 +23,10 @@
     const screen = document.getElementById('screen')
     const context = screen.getContext('2d') // permite que você manipule e desenhe objetos em 2D
     
+    const keyboardListener = createKeyboardListener()
     const game = createGame()
+    keyboardListener.subscribe(game.movePlayer)
 
-    
     function renderScreen() {
       context.clearRect(0,0, 10, 10)
 
@@ -43,21 +44,40 @@
       requestAnimationFrame(renderScreen) // uma API do próprio JavaScript que informa ao navegador que fará uma animação
     }
 
-    function createKeyboardListerner() {
-
-    }
-
-    document.addEventListener('keydown', handleKeydown)
-
-    function handleKeydown(event) {
-      const keyPressed = event.key
+    function createKeyboardListener() {
       
-      const command = {
-        currentPlayerId: 'player 1',
-        keyPressed
+      const state = {
+        observers: []
       }
       
-      game.movePlayer(command)
+      function subscribe(observerFunction) {
+        state.observers.push(observerFunction)
+      }
+      
+      function notifyAll(command) {
+        console.log(`Notifing ${state.observers.length} observers`)
+        
+        for (const observerFunction of state.observers) {
+          observerFunction(command)
+        }
+      }
+    
+      document.addEventListener('keydown', handleKeydown)
+
+      function handleKeydown(event) {
+        const keyPressed = event.key
+        
+        const command = {
+          currentPlayerId: 'player 1',
+          keyPressed
+        }
+        
+        notifyAll(command)
+  
+      }
+      return {
+        subscribe
+      }
     }
 
     renderScreen()
