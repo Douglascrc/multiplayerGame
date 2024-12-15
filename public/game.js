@@ -9,7 +9,7 @@ export default function createGame() {
   };
 
   function start() {
-    const frequency = 2000
+    const frequency = 4000
 
     setInterval(addFruit, frequency)
   }
@@ -67,6 +67,12 @@ export default function createGame() {
     })
   }
 
+  function removeFruit(command) {
+    const fruitId = command.fruitId
+
+    delete state.fruits[fruitId]
+  }
+
   function removePlayer(command) {
     const playerId = command.playerId;
 
@@ -110,22 +116,22 @@ export default function createGame() {
     const keyPressed = command.keyPressed;
     const moveFunction = acceptedMoves[keyPressed];
     const player = state.players[command.playerId]
+    const playerId = command.playerId
 
     if(moveFunction && player) {
       moveFunction(player)
-      checkColision()
+      checkColision(playerId)
     }
   }
 
-  function checkColision() {
-    for (const playerId in state.players) {
-      const player = state.players[playerId];
-      for (const fruitId in state.fruits) {
-        const fruit = state.fruits[fruitId];
-        if (fruit.x === player.x && fruit.y === player.y) {
-          console.log(`Player ${playerId} collected fruit`);
-          delete state.fruits[fruitId];
-        }
+  function checkColision(playerId) {
+    const currentPlayer = state.players[playerId]
+
+    for (const fruitId in state.fruits) {
+      const fruit = state.fruits[fruitId];
+      if (fruit.x === currentPlayer.x && fruit.y === currentPlayer.y) {
+        console.log(`Player ${playerId} collected fruit`);
+        removeFruit({fruitId: fruitId})
       }
     }
   }
@@ -134,9 +140,11 @@ export default function createGame() {
     addPlayer,
     addFruit,
     removePlayer,
+    removeFruit,
     movePlayer,
     state,
     setState,
-    subscribe
+    subscribe,
+    start
   };
 }
